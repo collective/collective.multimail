@@ -1,9 +1,10 @@
 
+from collective.multimail.testing import COLLECTIVE_MULTIMAIL_INTEGRATION
 
 from Products.CMFCore.utils import getToolByName
 
-
-from collective.multimail.testing import COLLECTIVE_MULTIMAIL_INTEGRATION
+import unittest2 as unittest
+import doctest
 
 class TestMultiMail (unittest.TestCase):
 
@@ -23,3 +24,16 @@ class TestMultiMail (unittest.TestCase):
         installed = [p['id'] for p in self.qi_tool.listInstalledProducts()]
         self.assertTrue(pid in installed,
                         'package appears not to have been installed')
+
+
+class test_main_use_case():
+
+	layer = COLLECTIVE_MULTIMAIL_FUNCTIONAL 
+	options = doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE | doctest.REPORT_NDIFF
+	main_use_case = doctest.DocfileSuite('tests/main_use_case.rst', optionflags=options, globs=dict(layer=layer))
+
+	suite = unittest.TestSuite()
+	suite.add_Tests([main_use_case])
+	suite.layer = layer
+
+	return suite
