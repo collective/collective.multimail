@@ -2,6 +2,7 @@
 *.pyo
 *~
 *.egg-info
+.*.cfg
 bin
 parts
 develop-eggs
