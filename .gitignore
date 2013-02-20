@@ -2,3 +2,6 @@
 *.pyo
 *~
 *.egg-info
+bin
+parts
+develop-eggs
