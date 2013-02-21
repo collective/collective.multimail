@@ -24,51 +24,55 @@ Main Scenario
 >>> browser.getControl('').value = 'sendnewsletter'
 >>> browser.getControl("save").click()
 
-	2.  
+	2.  The integrator writes a script which receives the mail and resends it multiple
+        times based on results of a catalogQuery returning subscriptions objects.
+
+>>> browser.navigate('/portal/MailHost/sendnewsletter/manage_properties')
+>>> browser.getControl('script').value = """
+... 
+... subscriptions = [
+...    ('adam@example.com',   'blue' ),
+...    ('bel@example.com',    'green'),
+...    ('charls@example.com', 'red'  ),
+...    ('dave@example.com',   'blue' ),
+...    ('eve@example.com',    'green'),
+...    ('fred@example.com',   'green ),
+...    ('gav@example.com',    'blue' ),
+...    ('harry@example.com',  'orange'),
+...    ('izy@example.com',    'green' )   ]
+... 
+... path = mto.split(":")[1]
+... context = portal.restrictedTreverse(path)
+... 
+... subjects = context.Subject.split(" ")
+... results = filter(lambda s: s[1] in category)
+... 
+... for s in kkk:
+... 
+...     mailhost.send(
+...       personalMessageText,
+...       mto=s.Email, mfrom=mfrom,
+...       subject=subject )
+... 
+... """
+
+	3. Content editor creates a pages for which they would like to send as a
+       newsletter. And send the newsletter. We will replace the default mailhost
+       with a dummy one fist,
+
+>>> Mailhost.default = MockMailHost('default')
+
+>>> portal.manage_addPage(id='newsletter', subject=['blue'], body='some reallly'\
+...   'interesting text' )
+>>> message = portal['newsletter'].renderBoddy()
+>>> mfrom = 'newsletter@plonesite.com'
+>>> mto = 'sendnewsletter:/newsletter'
+>>> MailHost.send(message, mto, mfrom, subject="Newsletter")
+
+>>> print MailHost.default.messages
+one
+two
+three
 
 
-mailhost object should be used for email address which begin with 'sendnews:'
 
-This is a paragraph It's quite
-short
-
-	This paragraph *will* result **in** an indentation blobk of
-	text, bypikc
-
-this is another one. ``fixed space literal``
-
-
- 1. the first of many in a list
-    and here is the second line
-
-    a) And this is an a
-
-    b) and this is a b
-
- 2. a second line
-
- 3. a third line
-
- * an important point
- * a second important point
-
-    - a sub point of the above
-
-Section Two
-~~~~~~~~~~~
-
-what
-  this is a what! beleive it or not!
-
-how
-  no need to ask
-
-Sub section
-+++++++++++
-::
-
-  A little bit of code
-      for us to know
-    for a little infor
-
-Here werw are again
