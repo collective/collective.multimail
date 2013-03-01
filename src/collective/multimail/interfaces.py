@@ -18,3 +18,6 @@ class IScriptableMailHost(Interface):
 		readonly=False,
 		required=False,
 		default=_(u'') )
+
+
+class MultiMailChainStop(Exception): pass

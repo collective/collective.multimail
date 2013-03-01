@@ -76,39 +76,47 @@ class TestMultiMail (unittest.TestCase):
 
     def test_multi_mail_host(self):
 
-        sefRoles(self.portal, TEST_USER_ID, ['Manager',])
+        setRoles(self.portal, TEST_USER_ID, ['Manager',])
 
         from collective.multimail.MultiMailHost import manage_addMultiMailHost
 
         manage_addMultiMailHost(self.portal, "multimail")
+
         mm = self.portal['multimail']
 
         mm._setObject('one', MockMailHost('one') )
-        match1 = {'To:': 'one'}
-        target1 = {'action': 'send and stop', 'mailhost': 'one'}
-
         mm._setObject('two', MockMailHost('two') )
-        match2 = {'To:': 'two'}
-        target2 = {'action': 'send and stop', 'mailhost': 'two'}
-
         mm._setObject('catch_all', MockMailHost('catch_all') )
-        matchcatchall = {}
-        targetcatchall = {'action': 'send and stop', 'mailhost': 'catch_all'}
 
-        mm._setRules( [
-                (match1, target1),
-                (match2, target2),
-                (matchcatchall, targetcatchall)
-            ] )
+        mm._setChain("default",
+            [
+                {
+                    'header-match': {'to': 'one'},
+                    'action': 'send and stop',
+                    'mailhost': 'one'
+                },
+                {
+                    'header-match': {'to': 'two'},
+                    'action': 'send and stop',
+                    'mailhost': 'two'
+                },
+                {
+                    'action': 'send and stop',
+                    'mailhost': 'catch_all'
+                }
+            ]
+            )
 
 
-        mm.send('test for one', mto='one')
-        mm.send('test for two', mto='two')
-        mm.send('test not for one or two', mto='none')
+        mm.send("hello", mto="one", mfrom='test', subject="s")
+        mm.send("hello", mto="two", mfrom='test', subject="s")
+        mm.send("hello", mto="other", mfrom='test', subject="s")
 
+
+        import pdb; pdb.set_trace()
         self.assertTrue('To: one' in mm['one'].messages[-1])
         self.assertTrue('To: two' in mm['two'].messages[-1])
-        self.assertTrue('To: none' in mm['catch_all'].messages[-1])
+        self.assertTrue('To: other' in mm['catch_all'].messages[-1])
 
 
 

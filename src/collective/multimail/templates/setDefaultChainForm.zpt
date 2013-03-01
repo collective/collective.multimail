@@ -1,0 +1,20 @@
+
+
+ <tal:header replace='structure context/manage_page_header' />
+
+
+<form action="manage_setDefaultChain" method="post" 
+ enctype="multipart/form-data">
+
+
+<textarea name='yamlstring' tal:content='context/_chainDefaultConfig'>
+</textarea><br/>
+<input type='submit' />
+
+
+
+
+
+ </form>
+
+<tal:header replace='structure context/manage_page_footer' />

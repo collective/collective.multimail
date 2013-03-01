@@ -41,6 +41,8 @@ setup(name='collective.multimail',
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
+          
+          'PyYAML',
       ],
       extras_require={'test': ['plone.app.testing']},
       entry_points="""
