@@ -99,8 +99,6 @@ class MultiMailHost(Folder):
 
         header_match = rule.get('header-match', {})
 
-        import pdb; pdb.set_trace()
-
 
         if len(header_match) > 0:
 
