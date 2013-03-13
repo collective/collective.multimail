@@ -121,7 +121,7 @@ class MultiMailHost(Folder):
             if headers['from'] is None:
                 del headers['from']
 
-            headers['subject'] = sendargs['su1bject'] or headers.get('subject', None)
+            headers['subject'] = sendargs['subject'] or headers.get('subject', None)
             if headers['subject'] is None:
                 del headers['subject']
 
