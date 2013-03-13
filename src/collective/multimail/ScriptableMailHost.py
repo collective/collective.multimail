@@ -59,8 +59,9 @@ class ScriptableMailHost (PythonScript):
 
         
     security.declareProtected(use_mailhost_services, 'send')
-    def send(self, messageText, mto=None, mfrom=None, subject=None, encode=None,
-             charset=None, msg_type=None):
+    def send(self, messageText, mto=None, mfrom=None,
+              subject=None, encode=None,
+              immediate=False, charset=None, msg_type=None):
         """Send mail.
         """
 
@@ -70,6 +71,7 @@ class ScriptableMailHost (PythonScript):
                     mfrom=mfrom,
                     subject=subject,
                     encode=encode,
+                    immediate=immediate,
                     charset=charset,
                     msg_type=msg_type )
 
