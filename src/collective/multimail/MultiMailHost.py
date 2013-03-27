@@ -46,6 +46,8 @@ class MultiMailHost(Folder):
     meta_type = "Multi Mail Host"
     security = ClassSecurityInfo()
 
+    smtp_host = '-'
+
     manage_options = Folder.manage_options + ( {
             'label': 'Set Rules',
             'action': 'manage_setDefaultChainForm',
