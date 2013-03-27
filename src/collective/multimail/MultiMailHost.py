@@ -96,6 +96,13 @@ class MultiMailHost(Folder):
             pass
 
 
+    def secureSend(self, message, email_recipient, source,
+                                subject, subtype,
+                                charset=None, debug=False):
+        self.send(message, email_recipient, source, subject=subject, charset=charset, immediate=True)
+
+
+
     def _matchRuleForSend (self, rule, sendargs):
 
 
