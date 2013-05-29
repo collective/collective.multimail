@@ -1,11 +1,20 @@
 <?xml version="1.0"?>
 <import-steps>
-  <import-step id="multimailhost-various"
+  <import-step id="multimailhost-preToolSet"
                version="20130313-01"
-               handler="collective.multimail.setuphandlers.setupVarious"
-               title="MultiMailHost: replace mailhost">
-    <dependency step="toolset" />
-    Various import steps that are not handled by GS import/export
+               handler="collective.multimail.setuphandlers.setupPreToolSet"
+               title="MultiMailHost: stash current mailhost">
+    <!-- <dependency step="toolset" /> -->
+    Pre tool set import steps that are not handled by GS import/export
     handlers.
   </import-step>
+  <import-step id="multimailhost-postToolSet"
+               version="20130313-01"
+               handler="collective.multimail.setuphandlers.setupPostToolSet"
+               title="MultiMailHost: save stashed mailhost into multi mail">
+    <dependency step="toolset" />
+    Post tool set import steps that are not handled by GS import/export
+    handlers.
+  </import-step>
+
 </import-steps>

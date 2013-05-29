@@ -6,7 +6,7 @@
     i18n_domain="collective.multimail">
 
   <five:registerPackage package="." initialize=".initialize" />
-
+  
   <genericsetup:registerProfile
       name="default"
       title="collective.multimail"

@@ -9,7 +9,7 @@ from zope.pagetemplate.pagetemplatefile import PageTemplateFile
 import yaml
 from AccessControl.SecurityManagement import getSecurityManager
 
-from interfaces import MultiMailChainStop
+from interfaces import MultiMailChainStop, IMultiMailHost
 
 from OFS.Folder import Folder
 from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile
@@ -23,6 +23,8 @@ from email.message import Message
 
 import re
 _re_cache = {}
+
+_MARKER_OBJECT = object()
 
 def manage_addMultiMailHost(self, id, title='', REQUEST=None):
     """Add a new MultiMailHost object with id *id*. 
