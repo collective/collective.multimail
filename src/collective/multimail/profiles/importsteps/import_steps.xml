@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<import-steps>
+  <import-step id="multimailhost-verious"
+               version="0-20130313-01"
+               handler="collective.multimail.setuphandlers.setupVerious"
+               title="MultiMailHost: stash current mailhost">
+    <!-- <dependency step="toolset" /> -->
+    Pre tool set import steps that are not handled by GS import/export
+    handlers.
+  </import-step>
+</import-steps>

@@ -14,6 +14,14 @@
       description="Installs the collective.multimail package"
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
+
+  <genericsetup:registerProfile
+      name="importsteps"
+      title="collective.multimail"
+      directory="profiles/importsteps"
+      description="Installs the collective.multimail package import steps"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
   <!-- -*- extra stuff goes here -*- -->
   
 </configure>
