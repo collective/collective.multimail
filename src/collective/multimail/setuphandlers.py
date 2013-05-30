@@ -14,21 +14,17 @@ def setupVerious(context):
     createtool_MultiMailHost(context)
     save_stashed_MailHost(context)
 
-
-
 def stash_MailHost(context):
     portal = getToolByName(context._site, 'portal_url').getPortalObject()
     # let's not atempt recousion
-    if type(portal["MailHost"]) != MultiMailHost:
+    if type(portal["MailHost"].aq_base) != MultiMailHost:
         portal._setObject(_STASH_NAME, portal["MailHost"])
-
 
 def createtool_MultiMailHost(context):
     portal = getToolByName(context._site, 'portal_url').getPortalObject()
-    if type(portal["MailHost"]) != MultiMailHost:
+    if type(portal["MailHost"].aq_base) != MultiMailHost:
         portal._delObject("MailHost")
         portal._setObject("MailHost", MultiMailHost())
-
 
 def save_stashed_MailHost(context):
     portal = getToolByName(context._site, 'portal_url').getPortalObject()
