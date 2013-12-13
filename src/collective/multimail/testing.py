@@ -8,7 +8,7 @@ import collective.multimail
 COLLECTIVE_MULTIMAIL = PloneWithPackageLayer(
     zcml_package=collective.multimail,
     zcml_filename='testing.zcml',
-    gs_profile_id='collective.multimail:testing',
+    gs_profile_id='collective.multimail:default',
     name="COLLECTIVE_MULTIMAIL")
 
 COLLECTIVE_MULTIMAIL_INTEGRATION = IntegrationTesting(

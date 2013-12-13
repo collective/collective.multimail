@@ -1,4 +1,4 @@
-
+from Products.PythonScripts.PythonScript import manage_addPythonScript
 from collective.multimail.testing import COLLECTIVE_MULTIMAIL_INTEGRATION, COLLECTIVE_MULTIMAIL_FUNCTIONAL
 from Products.MailHost.interfaces import IMailHost
 from Products.CMFCore.utils import getToolByName
@@ -10,6 +10,7 @@ from Acquisition import aq_base
 import transaction
 
 from collective.multimail.ScriptableMailHost import manage_addScriptableMailHost
+
 
 from StringIO import StringIO
 
@@ -32,57 +33,7 @@ class TestMultiMail (unittest.TestCase):
         sm.unregisterUtility(provided=IMailHost)
         sm.registerUtility(mailhost, provided=IMailHost)
 
-    def tearDown(self):
-        self.portal.MailHost = self.portal._original_MailHost
-        sm = getSiteManager(context=self.portal)
-        sm.unregisterUtility(provided=IMailHost)
-        sm.registerUtility(aq_base(self.portal._original_MailHost),
-                           provided=IMailHost)
-    def test_product_is_installed(self):
-        """ Validate that our products GS profile has been run and the product 
-            installed
-        """
-        pid = 'collective.multimail'
-        installed = [p['id'] for p in self.qi_tool.listInstalledProducts()]
-        self.assertTrue(pid in installed,
-                        'package appears not to have been installed')
-
-    def test_scriptable_mail_host(self):
-
-
-
-        setRoles(self.portal, TEST_USER_ID, ['Manager',])
-
-        from collective.multimail.ScriptableMailHost import ScriptableMailHost
-
-        self.portal.sc_executed = False
-
-        manage_addScriptableMailHost(self.portal, 'scriptablemailhost')
-        sc = self.portal['scriptablemailhost']
-
-        message = "hello, world!"
-        mto = "a@b.com"
-        mfrom = "b@b.com"
-        subject = "test 7f14cb3d-d0b7-4950-b863-329da017a9e8"
-
-        script = "mailhost.send(messageText, mto=mto, mfrom=mfrom, subject=subject)\n"
-        sc.ZPythonScript_edit("", StringIO(script))
-
-        sc.send(message, mto, mfrom, subject)
-
-        lastMessage = self.portal.MailHost.messages[-1]
-        self.assertTrue(('Subject: %s'%subject) in lastMessage)
-
-
-    def test_multi_mail_host(self):
-
-        setRoles(self.portal, TEST_USER_ID, ['Manager',])
-
-        from collective.multimail.MultiMailHost import manage_addMultiMailHost
-
-        manage_addMultiMailHost(self.portal, "multimail")
-
-        mm = self.portal['multimail']
+        mm = self.portal['MultiMailHost']
 
         mm._setObject('one', MockMailHost('one') )
         mm._setObject('two', MockMailHost('two') )
@@ -102,11 +53,33 @@ class TestMultiMail (unittest.TestCase):
                 },
                 {
                     'action': 'send and stop',
-                    'mailhost': 'catch_all'
+                    'mailhost': 'default'
                 }
             ]
             )
 
+    def tearDown(self):
+        self.portal.MailHost = self.portal._original_MailHost
+        sm = getSiteManager(context=self.portal)
+        sm.unregisterUtility(provided=IMailHost)
+        sm.registerUtility(aq_base(self.portal._original_MailHost),
+                           provided=IMailHost)
+    def test_product_is_installed(self):
+        """ Validate that our products GS profile has been run and the product 
+            installed
+        """
+        pid = 'collective.multimail'
+        installed = [p['id'] for p in self.qi_tool.listInstalledProducts()]
+        self.assertTrue(pid in installed,
+                        'package appears not to have been installed')
+
+
+
+    def test_multi_mail_host(self):
+
+#        setRoles(self.portal, TEST_USER_ID, ['Manager',])
+
+        mm = self.portal['MultiMailHost']
 
         mm.send("hello", mto="one", mfrom='test', subject="s")
         mm.send("hello", mto="two", mfrom='test', subject="s")
@@ -115,20 +88,60 @@ class TestMultiMail (unittest.TestCase):
 
         self.assertTrue('To: one' in mm['one'].messages[-1])
         self.assertTrue('To: two' in mm['two'].messages[-1])
-        self.assertTrue('To: other' in mm['catch_all'].messages[-1])
+        self.assertTrue('To: other' in self.portal['MailHost'].messages[-1])
 
 
+    def test_monkeypatch(self):
+
+        mm = self.portal['MultiMailHost']
+        self.assertTrue(len(mm['one'].messages) == 0)
+
+        #we have to send via a real MailHost object
+        mailhost = self.portal._original_MailHost
+        mailhost.send("hello", mto="one", mfrom='test', subject="s")
+        self.assertTrue('To: one' in mm['one'].messages[-1])
+
+    def test_scriptable_mail_host(self):
+        setRoles(self.portal, TEST_USER_ID, ['Manager',])
+        self.portal.sc_executed = False
+
+        manage_addPythonScript(self.portal, 'scriptablemailhost')
+        sc = self.portal['scriptablemailhost']
+
+        message = "hello, world!"
+        mto = "a@b.com"
+        mfrom = "b@b.com"
+        subject = "test 7f14cb3d-d0b7-4950-b863-329da017a9e8"
+
+        script = "context.MailHost.send(messageText, mto=mto, mfrom=mfrom, subject=subject)\n"
+        sc.ZPythonScript_edit("messageText, mto, mfrom, subject, encode, immediate, charset, msg_type",
+                              StringIO(script))
+
+        mm = self.portal['MultiMailHost']
+        mm._setChain("default",
+            [
+                {
+                    'action': 'send and stop',
+                    'mailhost': 'scriptablemailhost'
+                },
+            ]
+            )
+
+        mm.send(message, mto, mfrom, subject)
+
+        lastMessage = self.portal.MailHost.messages[-1]
+        self.assertTrue(('Subject: %s'%subject) in lastMessage)
 
 
+def _test_suite():
 
-def test_suite():
+    layer = COLLECTIVE_MULTIMAIL_FUNCTIONAL
+    options = doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE | doctest.REPORT_NDIFF
+    main_use_case = doctest.DocFileSuite('main_use_case.rst', optionflags=options, globs=dict(layer=layer))
 
-	layer = COLLECTIVE_MULTIMAIL_FUNCTIONAL 
-	options = doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE | doctest.REPORT_NDIFF
-	main_use_case = doctest.DocFileSuite('main_use_case.rst', optionflags=options, globs=dict(layer=layer))
+    suite = unittest.TestSuite()
+    #suite.addTests([main_use_case])
+    #suite.addTests([TestMultiMail()])
+    suite.layer = layer
 
-	suite = unittest.TestSuite()
-	suite.addTests([main_use_case])
-	suite.layer = layer
-
-	return suite
+    return suite

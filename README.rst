@@ -1,5 +1,8 @@
 .. contents::
 
+.. image:: https://secure.travis-ci.org/collective/collective.multimail.png
+    :target: http://travis-ci.org/collective/collective.multimail
+
 Introduction
 ============
 
