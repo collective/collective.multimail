@@ -15,8 +15,13 @@ Main Scenario
         the multimail mailhost object by specifying that the postman user has 
         the privilege to use it and that the scriptable
 
+>>> portal = layer['portal']
+>>> MailHost = portal.MultiMailHost
+>>> from zope.testbrowser.browser import Browser
+>>> browser = Browser()
+
 >>> MailHost.manage_addScriptableMailHost(id='sendnewsletter')
->>> browser.navigate('/portal/MailHost/manage_rules')
+>>> browser.open('/portal/MailHost/manage_rules')
 >>> browser.getControl('addline').click()
 >>> browser.getControl('expression').value = 'python: permission = zope.manager'
 >>> browser.getControl('mto').value = r'^sendnewsletter:.+'
@@ -27,7 +32,7 @@ Main Scenario
 	2.  The integrator writes a script which receives the mail and resends it multiple
         times based on results of a catalogQuery returning subscriptions objects.
 
->>> browser.navigate('/portal/MailHost/sendnewsletter/manage_properties')
+>>> browser.navigate('/portal/MultiMailHost/sendnewsletter/manage_properties')
 >>> browser.getControl('script').value = """
 ... 
 ... subscriptions = [

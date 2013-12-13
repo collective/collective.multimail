@@ -2,7 +2,9 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:five="http://namespaces.zope.org/five"
     xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:monkey="http://namespaces.plone.org/monkey"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="collective.multimail">
 
   <five:registerPackage package="." initialize=".initialize" />
@@ -14,14 +16,27 @@
       description="Installs the collective.multimail package"
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
-
-  <genericsetup:registerProfile
-      name="importsteps"
-      title="collective.multimail"
-      directory="profiles/importsteps"
-      description="Installs the collective.multimail package import steps"
-      provides="Products.GenericSetup.interfaces.EXTENSION"
-      />
   <!-- -*- extra stuff goes here -*- -->
-  
+
+    <include package="collective.monkeypatcher" />
+
+    <monkey:patch
+        description="Patch MailHost to use Multimail instead. Ensures we don't get replaced"
+        class="Products.MailHost.MailHost.MailBase"
+        original="send"
+        replacement=".patch.send"
+        preserveOriginal="True"
+        />
+
+  <browser:pages
+      for=".interfaces.IMultiMailHost"
+      class=".MultiMailHost.ChainSetView"
+      permission="five.ManageSite"
+          >
+   <browser:page
+        name="manage_setDefaultChainForm"
+        template="templates/setDefaultChainForm.zpt" />
+  </browser:pages>
+
+
 </configure>

@@ -1,15 +1,38 @@
+<h1 tal:replace="structure context/manage_page_header" />
+<h1 tal:replace="structure context/manage_tabs" />
 
+<h2>Manage MultiMail Rule Chain</h2>
 
- <tal:header replace='structure context/manage_page_header' />
+<p class="form-help" >Configuration for your mail chain.</p>
+<p class="form-help" >In YAML format a list
+of rules, which consist of a 'header-match', 'action' and 'mailhost'.</p>
+<p class="form-help" >The 'mailhost' is path which can be tranversed to either a mailhost object
+    or a callable that takes the params of a Mailhost.send method
+<pre>
+(messageText, mto=None, mfrom=None, subject=None, encode=None, immediate=False, charset='utf8', msg_type=None).
+</pre>
+'default' is a special mailhost which uses plones built in mailhost
+</p>
 
+<p class="form-help">Am example configuration might be
+<pre>
+- header-match: {to: 'abc@example.com', subject: 'blah'}
+  action: 'send and stop'
+  mailhost: 'mailhost_id'
 
-<form action="manage_setDefaultChain" method="post" 
- enctype="multipart/form-data">
+- header-match: {from: 'abc@example.com'}
+  action: 'send and stop'
+  mailhost: 'mailhost_id2'
+</pre>
+</p>
 
+        <p tal:content="view/last_error" tal:condition="view/last_error|default"></p>
 
-<textarea name='yamlstring' tal:content='context/_chainDefaultConfig'>
+<form action="manage_setDefaultChainForm" method="post" enctype="multipart/form-data">
+<textarea name='yamlstring' cols="80" rows="30" tal:content='view/last_rules|context/getChainConfig'>
 </textarea><br/>
-<input type='submit' />
+
+    <input type='submit' />
 
 
 

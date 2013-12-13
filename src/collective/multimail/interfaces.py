@@ -21,7 +21,7 @@ class IScriptableMailHost(Interface):
 		default=_(u'') )
 
 
-class IMultiMailHost(Interface): pass
+class IMultiMailHost(IMailHost): pass
 
 class MultiMailChainStop(Exception): pass
 

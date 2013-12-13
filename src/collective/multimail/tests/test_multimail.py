@@ -113,7 +113,6 @@ class TestMultiMail (unittest.TestCase):
         mm.send("hello", mto="other", mfrom='test', subject="s")
 
 
-        import pdb; pdb.set_trace()
         self.assertTrue('To: one' in mm['one'].messages[-1])
         self.assertTrue('To: two' in mm['two'].messages[-1])
         self.assertTrue('To: other' in mm['catch_all'].messages[-1])
@@ -122,7 +121,7 @@ class TestMultiMail (unittest.TestCase):
 
 
 
-def xxtest_suite():
+def test_suite():
 
 	layer = COLLECTIVE_MULTIMAIL_FUNCTIONAL 
 	options = doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE | doctest.REPORT_NDIFF

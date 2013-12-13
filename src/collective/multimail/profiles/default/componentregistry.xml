@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<componentregistry>
- <adapters/>
- <subscribers/>
- <utilities>
-  <utility interface="Products.MailHost.interfaces.IMailHost"
-     object="MailHost"/>
- </utilities>
-</componentregistry>

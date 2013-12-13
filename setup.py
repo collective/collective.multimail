@@ -41,7 +41,8 @@ setup(name='collective.multimail',
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
-          
+          'collective.monkeypatcher',
+
           'PyYAML',
       ],
       extras_require={'test': ['plone.app.testing']},

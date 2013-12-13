@@ -1,4 +1,4 @@
-
+from Products.Five import BrowserView
 from zope.interface import implements
 from Products.MailHost.interfaces import IMailHost
 from AccessControl.SecurityInfo import ClassSecurityInfo
@@ -20,11 +20,22 @@ from persistent.dict import PersistentDict
 manage_addMultiMailHostForm=DTMLFile('templates/addMultiMailForm', globals())
 
 from email.message import Message
+from yaml.parser import ParserError
 
 import re
 _re_cache = {}
 
 _MARKER_OBJECT = object()
+
+DEFAULT_RULES = """
+-
+ action: 'send and stop'
+ mailhost: 'default'
+"""
+
+class InvalidRulesException(Exception):
+    pass
+
 
 def manage_addMultiMailHost(self, id, title='', REQUEST=None):
     """Add a new MultiMailHost object with id *id*. 
@@ -43,18 +54,16 @@ def manage_addMultiMailHost(self, id, title='', REQUEST=None):
 class MultiMailHost(Folder):
     """MultiMailHost"""
 
-    implements(IMailHost)
+    implements(IMultiMailHost)
 
     meta_type = "Multi Mail Host"
     security = ClassSecurityInfo()
 
-    smtp_host = '-'
-
-    manage_options = Folder.manage_options + ( {
+    manage_options =  ( ( {
             'label': 'Set Rules',
             'action': 'manage_setDefaultChainForm',
-            'help': () 
-        },) 
+        },) + Folder.manage_options )
+
 
 
     def __init__(self, id=None):
@@ -63,9 +72,14 @@ class MultiMailHost(Folder):
             self.id = str(id)
 
         self._chains = PersistentDict()
-        self._chainDefaultConfig  = ''
+        self._chainDefaultConfig  = DEFAULT_RULES
 
 
+    def getChainConfig(self):
+        """
+        :return: current YAML config
+        """
+        return self._chainDefaultConfig
 
 
     security.declareProtected(use_mailhost_services, 'send')
@@ -173,65 +187,99 @@ class MultiMailHost(Folder):
 
         for rule in chain:
 
-            if self._matchRuleForSend (rule, sendargs):
+            if not self._matchRuleForSend (rule, sendargs):
+                continue
 
-                action = rule['action']
-
-                if action == 'send and continue':
-                    self[rule['mailhost']].send(**sendargs)
-
-                elif action == 'send and stop':
-                    self[rule['mailhost']].send(**sendargs)
-                    raise MultiMailChainStop()
-
-                elif action == 'stop':
-                    raise MultiMailChainStop()
-
-                elif action == 'send and return':
-                    raise NotImplemented()
-                    self[rule['mailhost']].send(**sendargs)
-                    return
-
-                elif action == 'jump':
-                    raise NotImplemented()
-                    self._sendToChain(rule['chain'], currentDepth, sendargs)
-
-                elif action == 'return':
-                    raise NotImplemented()
-                    return
-
+            action = rule['action']
+            if rule['mailhost'] == 'default':
+                send = self.aq_parent.MailHost._old_send
+            #elif rule['mailhost'] in self.objectIds():
+            #    send = self.get(rule['mailhost']).send
+            else:
+                view = self.unrestrictedTraverse(rule['mailhost'])
+                if IMailHost.providedBy(view):
+                    send = view.send
+                elif view is not None:
+                    #assume its a callable
+                    send = view
                 else:
-                    raise Exception("Invalid action")
+                    send = None
 
-    template_manage_setDefaultChainForm = PageTemplateFile("templates/setDefaultChainForm.zpt", globals())
-    def manage_setDefaultChainForm (self):
-        """manage_setDefaultChainForm"""
-        return self.template_manage_setDefaultChainForm.pt_render({'context':self})
-        
+            if action == 'send and continue':
+                send(**sendargs)
 
+            elif action == 'send and stop':
+                send(**sendargs)
+                raise MultiMailChainStop()
 
-    def manage_setDefaultChain (self, yamlstring):
-        """manage_setDefaultChain"""
+            elif action == 'stop':
+                raise MultiMailChainStop()
 
-        self._chainDefaultConfig = yamlstring
-        rules = yaml.load(yamlstring)
+            elif action == 'send and return':
+                raise NotImplemented()
+                send(**sendargs)
+                return
 
-        self._setChain("default", rules)
+            elif action == 'jump':
+                raise NotImplemented()
+                self._sendToChain(rule['chain'], currentDepth, sendargs)
 
-        self.REQUEST.RESPONSE.redirect(self.REQUEST['URL1']+'/manage_setDefaultChainForm')
+            elif action == 'return':
+                raise NotImplemented()
+                return
+
+            else:
+                raise Exception("Invalid action")
+
 
     def _setChain(self, chain, rules):
+
+        if not rules:
+            raise InvalidRulesException("Empty rules")
 
         if chain != 'default':
             raise NotImplemented("support for only a default chain")
 
         for r in rules:
             if r['action'] not in ('send and continue', 'send and stop', 'stop'):
-                raise Exception ("invalid action")
+                raise InvalidRulesException ("invalid action")
 
         self._chains[chain] = rules
 
     def _getChain (self, chain):
         return self._chains[chain]
+
+class ChainSetView(BrowserView):
+
+    last_error = ""
+    last_rules = None
+
+    title = "blah"
+
+
+    def __call__(self, yamlstring=None):
+        """manage_setDefaultChain"""
+        if yamlstring is None:
+            self.last_rules = self.context.getChainConfig()
+            return self.index()
+
+        try:
+            rules = yaml.load(yamlstring)
+            self.context._setChain("default", rules)
+            self.context._chainDefaultConfig = yamlstring
+            self.last_error = ""
+            self.last_rules = yamlstring
+            self.request['manage_tabs_message'] = "Saved"
+        except ParserError, e:
+            self.last_error = str(e)
+            self.last_rules = yamlstring
+        except InvalidRulesException, e:
+            self.last_error = str(e)
+            self.last_rules = yamlstring
+
+        return self.index()
+
+#        self.request.RESPONSE.redirect(self.request['URL1']+'/manage_setDefaultChainForm')
+
 
 InitializeClass(MultiMailHost)
