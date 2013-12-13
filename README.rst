@@ -7,10 +7,17 @@ Allows you to use more than one mailhost. Email is filtered by rules which
 determine which mailhost to send a particular email to. Each rule can apply
 regular expressions to email headers such as "to", "from" and "subject".
 Scripts or views can be configured in place of a mailhost to allow custom
-behaviour such as sending via an external api such as twitter, or expanding
-special email addresses into multiple send calls.
+behaviour.
 
-For example, if you have rules ::
+Potential uses include:
+
+- use different smtp servers depending on the sender
+- expanding special email addresses into multiple send calls
+- sending via an external api such as twitter
+- adding additional headers or altering the text of standard Plone emails
+
+
+For example, if you have a rule chain ::
 
     - header-match: {to: 'allsubscribers@notarealdomain'}
       action: 'send and stop'
