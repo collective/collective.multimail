@@ -1,6 +1,14 @@
 Changelog
 =========
 
+
+1.0a6 (unreleased)
+------------------
+- Switched to monkey patching to solve problems of being overwritten
+  (djay)
+- Allow normal python scripts of views to be used
+  (djay)
+
 1.0a1.dev1-dev (unreleased)
 ---------------------------
 

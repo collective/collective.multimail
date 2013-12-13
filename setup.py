@@ -4,7 +4,7 @@ import os
 version = '1.0a6'
 
 long_description = (
-    open('README.txt').read()
+    open('README.rst').read()
     + '\n' +
     'Contributors\n'
     '============\n'
@@ -31,7 +31,7 @@ setup(name='collective.multimail',
       keywords='',
       author='Adam Terrey',
       author_email='software@pretaweb.com',
-      url='http://svn.plone.org/svn/collective/',
+      url='https://github.com/collective/collective.multimail',
       license='gpl',
       packages=find_packages('src'),
       package_dir={'': 'src'},

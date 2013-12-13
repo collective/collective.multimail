@@ -13,10 +13,10 @@ def initialize(context):
     """Initializer called when used as a Zope 2 product."""
 
 
-    context.registerClass (
-            ScriptableMailHost,
-            constructors=(manage_addScriptableMailHostForm, manage_addScriptableMailHost)
-        )
+    #context.registerClass (
+    #        ScriptableMailHost,
+    #        constructors=(manage_addScriptableMailHostForm, manage_addScriptableMailHost)
+    #    )
 
     context.registerClass (
             MultiMailHost.MultiMailHost,
