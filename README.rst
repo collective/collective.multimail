@@ -14,10 +14,10 @@ behaviour.
 
 Potential uses include:
 
-- using different SMTP servers depending on the sender
-- expanding special email addresses into multiple send calls
-- sending via an external api such as twitter
-- adding additional headers or altering the text of standard Plone emails
+- using different SMTP servers depending on the sender;
+- expanding special email addresses into multiple send calls;
+- sending via an external API such as twitter;
+- adding additional headers or altering the text of standard Plone emails.
 
 For example, if you have a rule chain::
 
@@ -29,7 +29,7 @@ For example, if you have a rule chain::
     - action: 'send and stop'
       mailhost: 'default'
 
-and you have a Python Script 'sendtoall'::
+and you have a Python Script ``sendtoall``::
 
     def sendtoall(messageText, mto=None, mfrom=None, subject=None, encode=None, immediate=False, charset='utf8', msg_type=None):
         for email in context.getSubscribers():
