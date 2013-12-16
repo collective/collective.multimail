@@ -6,7 +6,7 @@ def send(self, messageText, mto=None, mfrom=None, subject=None,
     """Monkey patch MailHost send to use MultiMail instead
     """
     #assume multimail is in same folder
-    multimails = self.aq_parent.objectValues(["Multi Mail Host"])
+    multimails = self.superValues(['Multi Mail Host'])
     if len(multimails) == 0:
         return self._old_send(messageText, mto, mfrom, subject,
                               encode, immediate, charset, msg_type)
