@@ -20,6 +20,7 @@ from persistent.dict import PersistentDict
 manage_addMultiMailHostForm=DTMLFile('templates/addMultiMailForm', globals())
 
 from email.message import Message
+from email import message_from_string
 from yaml.parser import ParserError
 
 import re
@@ -107,7 +108,8 @@ class MultiMailHost(Folder):
         thread_data.collective_multimailhost_send_depth = depth + 1
 
         try:
-            self._sendToChain ("default", 0, sendargs)
+            matchargs = self._matchHeaders(sendargs)
+            self._sendToChain ("default", 0, sendargs, matchargs)
         except MultiMailChainStop:
             pass
 
@@ -130,7 +132,7 @@ class MultiMailHost(Folder):
             ### Normalise headers ###
 
             headers = {}
-            if isinstance(type(sendargs["messageText"]), Message):
+            if isinstance(sendargs["messageText"], Message):
                 for key, value in sendargs["messageText"].items():
 
                     # not suer if theis is the correct way to decode a MIME header value
@@ -174,11 +176,38 @@ class MultiMailHost(Folder):
 
         return True
 
+    def _matchHeaders(self, sendargs):
+        """Sets missing message headers.
+        returns fixed sendargs"""
+        matchargs = sendargs
+        messageText = sendargs['messageText'] if 'messageText' in sendargs else ''
+        charset = sendargs['charset'] if 'charset' in sendargs else None
+
+        # If we have been given unicode fields, attempt to encode them
+        if isinstance(messageText, unicode):
+            messageText = self._try_encode(messageText, charset)
+
+        mo = messageText
+        if not isinstance(messageText, Message):
+            # Otherwise parse the input message
+            mo = message_from_string(messageText)
+
+        if 'messageText' in matchargs:
+            matchargs['messageText'] = mo
+
+        return matchargs
+
+    def _try_encode(self, text, charset):
+        """Attempt to encode using the default charset if none is
+        provided.  Should we permit encoding errors?"""
+        if charset:
+            return text.encode(charset)
+        else:
+            return text.encode()
 
 
-
-    def _sendToChain(self, chain, currentDepth, sendargs):
-        """Send mail.
+    def _sendToChain(self, chain, currentDepth, sendargs, matchargs):
+        """Send mail. matchargs is just for _matchRuleForSend function
         """
 
         currentDepth = currentDepth + 1
@@ -190,7 +219,7 @@ class MultiMailHost(Folder):
 
         for rule in chain:
 
-            if not self._matchRuleForSend (rule, sendargs):
+            if not self._matchRuleForSend(rule, matchargs):
                 continue
 
             action = rule['action']
@@ -225,7 +254,7 @@ class MultiMailHost(Folder):
 
             elif action == 'jump':
                 raise NotImplemented()
-                self._sendToChain(rule['chain'], currentDepth, sendargs)
+                self._sendToChain(rule['chain'], currentDepth, sendargs, matchargs)
 
             elif action == 'return':
                 raise NotImplemented()
