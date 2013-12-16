@@ -8,9 +8,17 @@ Changelog
   (djay)
 - Allow normal python scripts of views to be used
   (djay)
+- Fix issue when called from PloneFormGen or via acquisition
+  (ivant)
 
-1.0a1.dev1-dev (unreleased)
+1.0a4 (2013-05-29)
+------------------
+- First release
+  (aterrey)
+
+
+1.0a1 (unreleased)
 ---------------------------
 
-- Package created using templer
-  []
+- Initial version
+  (aterrey)

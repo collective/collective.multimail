@@ -65,5 +65,8 @@ Rules are evaluated top to bottom.
 
 Rules are set via the ZMI.
 
+'default' is a special mailhost which uses the orginal mailhost object unfiltered. If
+you want to resend an email and have it also filtered then use '/MailHost'.
+
 
 
