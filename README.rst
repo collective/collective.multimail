@@ -65,8 +65,14 @@ Rules are evaluated top to bottom.
 
 Rules are set via the ZMI.
 
-'default' is a special mailhost which uses the orginal mailhost object unfiltered. If
-you want to resend an email and have it also filtered then use '/MailHost'.
+``default`` is a special mailhost which uses the orginal mailhost object unfiltered. If
+you want to resend an email and have it also filtered then use ``/MailHost``.
 
+TODO
+====
+
+[ ] Test with PloneFormGen
+[ ] Handle matching when email is sent as text including headers (like PFG)
+[ ] Ability to disable monkeypatch so can be used standalone
 
 

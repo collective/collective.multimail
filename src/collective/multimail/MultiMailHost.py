@@ -185,6 +185,9 @@ class MultiMailHost(Folder):
 
         chain = self._getChain(chain)
 
+        posargs = [sendargs[x] for x in ('messageText','mto','mfrom','subject',
+                   'encode', 'immediate', 'charset', 'msg_type')]
+
         for rule in chain:
 
             if not self._matchRuleForSend (rule, sendargs):
@@ -206,10 +209,10 @@ class MultiMailHost(Folder):
                     send = None
 
             if action == 'send and continue':
-                send(**sendargs)
+                send(*posargs)
 
             elif action == 'send and stop':
-                send(**sendargs)
+                send(*posargs)
                 raise MultiMailChainStop()
 
             elif action == 'stop':
@@ -217,7 +220,7 @@ class MultiMailHost(Folder):
 
             elif action == 'send and return':
                 raise NotImplemented()
-                send(**sendargs)
+                send(*posargs)
                 return
 
             elif action == 'jump':
