@@ -132,6 +132,18 @@ class TestMultiMail (unittest.TestCase):
         lastMessage = self.portal.MailHost.messages[-1]
         self.assertTrue(('Subject: %s'%subject) in lastMessage)
 
+    def test_all_in_message_text(self):
+
+#        setRoles(self.portal, TEST_USER_ID, ['Manager',])
+
+        mm = self.portal['MultiMailHost']
+
+        message = 'X-SMTPAPI: {"to": ["<kiki@mail.com>", "<glebe5@mail.com>", "<name@mail.com>", "<first@mail.com>", "<mimi@mail.com>", "<perry@mail.com>", "<firstone@mail.com>", "<glebe3@mail.com>", "<mail@mail.com>", "<mike@mail.com>"]}\nContent-Type: multipart/alternative;\n boundary="===============9046951120719983934=="\nMIME-Version: 1.0\nTo: <abcd@mail.com>\nFrom: <abc@mail.com>\nSubject: Is1\n\n--===============9046951120719983934==\nContent-Type: multipart/related;\n boundary="===============1341506654315137165=="\nMIME-Version: 1.0\n\n--===============1341506654315137165==\nContent-Type: text/plain; charset="utf-8"\nMIME-Version: 1.0\nContent-Transfer-Encoding: quoted-printable\n\n\nDear Test Member\n=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=\n=3D=3D=3D=3D=3D=3D=3D=3D=3D\n\nBe safe 1\n\n=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=\n=3D=3D=3D=3D=3D=3D=3D=3D=3D\n\n\n------------------------------------------------------------------------\n\n\n--===============1341506654315137165==--\n--===============9046951120719983934==\nContent-Type: multipart/related;\n boundary="===============2152036350975026834=="\nMIME-Version: 1.0\n\n--===============2152036350975026834==\nContent-Type: text/html; charset="utf-8"\nMIME-Version: 1.0\nContent-Transfer-Encoding: quoted-printable\n\n<html xmlns=3D"http://www.w3.org/1999/xhtml">\n<head>\n<title>Is1</title>\n\n</head>\n<body>\n<!-- this is the header of the newsletter -->\n<div class=3D"header">\n<p>Dear Test Member<br />=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=\n=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D</p>\n</div>\n<!-- this is the main text of the newsletter -->\n<div class=3D"body-text">\n<p>Be safe 1</p>\n</div>\n<!-- this is the footer of the newsletter -->\n<div class=3D"footer">\n<p>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=\n=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br /></p>\n</div>\n</body>\n</html>\n--===============2152036350975026834==--\n--===============9046951120719983934==--\n'
+
+        mm.send(message)
+
+        self.assertTrue('X-SMTPAPI:' in self.portal['MailHost'].messages[-1])
+
 
 def _test_suite():
 
