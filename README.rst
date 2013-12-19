@@ -25,7 +25,7 @@ For example, if you have a rule chain::
       action: 'send and stop'
       mailhost: '/sendtoall'
 
-    # Catch-all rule, looks for mailhost object named 'default' by acquisition
+    # Catch-all rule, uses the patched MailHost object.
     - action: 'send and stop'
       mailhost: 'default'
 
@@ -60,6 +60,7 @@ action
 mailhost
   A traversable path to a IMailHost object or callable. Callables need to support
   the arguments (messageText, email, mfrom, subject, encode, immediate, charset, msg_type).
+  The path is relative to the MultiMailHost and paths starting with / start from the Zope root.
 
 Rules are evaluated top to bottom.
 
@@ -71,8 +72,9 @@ you want to resend an email and have it also filtered then use ``/MailHost``.
 TODO
 ====
 
-[ ] Test with PloneFormGen
-[ ] Handle matching when email is sent as text including headers (like PFG)
-[ ] Ability to disable monkeypatch so can be used standalone
+- [ ] Test with PloneFormGen
+- [ ] Handle matching when email is sent as text including headers (like PFG)
+- [ ] Ability to disable monkeypatch so can be used standalone
+- [ ] Security around traverse to script
 
 
