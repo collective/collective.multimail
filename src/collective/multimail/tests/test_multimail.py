@@ -154,16 +154,3 @@ class TestMultiMail (unittest.TestCase):
 
         self.assertTrue('X-SMTPAPI:' in mm['two'].messages[-1])
 
-
-def _test_suite():
-
-    layer = COLLECTIVE_MULTIMAIL_FUNCTIONAL
-    options = doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE | doctest.REPORT_NDIFF
-    main_use_case = doctest.DocFileSuite('main_use_case.rst', optionflags=options, globs=dict(layer=layer))
-
-    suite = unittest.TestSuite()
-    #suite.addTests([main_use_case])
-    #suite.addTests([TestMultiMail()])
-    suite.layer = layer
-
-    return suite

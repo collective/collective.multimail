@@ -22,6 +22,9 @@ manage_addMultiMailHostForm=DTMLFile('templates/addMultiMailForm', globals())
 from email.message import Message
 from email import message_from_string
 from yaml.parser import ParserError
+import logging
+log = logging.getLogger("collective.multimail")
+
 
 import re
 _re_cache = {}
@@ -222,6 +225,8 @@ class MultiMailHost(Folder):
             if not self._matchRuleForSend(rule, matchargs):
                 continue
 
+            log.info("rule %s matched. send and continue" % rule)
+
             action = rule['action']
             if rule['mailhost'] == 'default':
                 send = self.aq_parent.MailHost._old_send
@@ -262,6 +267,7 @@ class MultiMailHost(Folder):
 
             else:
                 raise Exception("Invalid action")
+        log.info("end of chain reached" % rule)
 
 
     def _setChain(self, chain, rules):

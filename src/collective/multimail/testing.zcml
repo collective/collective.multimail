@@ -7,7 +7,9 @@
 
   <include file="configure.zcml" />
 
-    <!--
+  <include package="Products.EasyNewsletter"/>
+  <include package="Products.PloneFormGen"/>
+
   <genericsetup:registerProfile
       name="testing"
       title="collective.multimail tests"
@@ -15,5 +17,4 @@
       description="Steps to ease tests of collective.multimail"
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
--->
 </configure>
