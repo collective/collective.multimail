@@ -73,7 +73,6 @@ TODO
 ====
 
 - [ ] Test with PloneFormGen
-- [ ] Handle matching when email is sent as text including headers (like PFG)
 - [ ] Ability to disable monkeypatch so can be used standalone
 - [ ] Security around traverse to script
 

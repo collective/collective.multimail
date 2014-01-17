@@ -12,6 +12,9 @@ Changelog
   (ivanteoh)
 - Add test for matching rules
   (ivanteoh)
+- Handle emails passed in as RFC2822
+  (ivanteoh)
+
 
 1.0a4 (2013-05-29)
 ------------------
