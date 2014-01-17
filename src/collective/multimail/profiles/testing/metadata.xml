@@ -3,7 +3,8 @@
   <version>0001</version>
   <dependencies>
     <dependency>profile-collective.multimail:default</dependency>
-    <dependency>profile-Products.EasyNewsletter:default</dependency>
+<!--    <dependency>profile-Products.EasyNewsletter:default</dependency>
     <dependency>profile-Products.PloneFormGen:default</dependency>
+-->
   </dependencies>
 </metadata>
