@@ -5,14 +5,14 @@ version = '1.0a6'
 
 long_description = (
     open('README.rst').read()
-    + '\n' +
+    + '\n\n' +
     'Contributors\n'
     '============\n'
-    + '\n' +
+    + '\n\n' +
     open('CONTRIBUTORS.txt').read()
-    + '\n' +
+    + '\n\n' +
     open('CHANGES.txt').read()
-    + '\n')
+    + '\n\n')
 
 setup(name='collective.multimail',
       version=version,
