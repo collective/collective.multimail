@@ -146,6 +146,9 @@ class MultiMailHost(Folder):
             headers['to'] = sendargs['mto'] or headers.get('to', None)
             if headers['to'] is None:
                 del headers['to']
+            else:
+                if isinstance(headers['to'], (list, tuple)):
+                    headers['to'] = ', '.join(headers['to'])
 
             headers['from'] = sendargs['mfrom'] or headers.get('from', None)
             if headers['from'] is None:
